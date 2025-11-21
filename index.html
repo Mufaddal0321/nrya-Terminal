@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Love Terminal — For Amrutha</title>
+
+  <style>
+    :root{
+      --bg:#000; --text:#7CFC00; --muted:#66c266; --accent:#ff6b9a;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+      --max-width:900px;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0; font-family:var(--mono); background:radial-gradient(ellipse at top left,#001100 0%, #000 60%); color:var(--text);
+      display:flex; align-items:center; justify-content:center; padding:28px; -webkit-font-smoothing:antialiased;
+    }
+    .container{width:100%; max-width:var(--max-width);}
+    .viewport{
+      background:linear-gradient(180deg, rgba(0,0,0,0.85), rgba(0,0,0,0.95));
+      border-radius:12px; padding:28px; box-shadow: 0 10px 40px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
+      border:1px solid rgba(124,252,0,0.06);
+    }
+
+    header{display:flex; align-items:center; gap:12px; margin-bottom:18px}
+    .logo{width:42px; height:42px; border-radius:8px; background:linear-gradient(135deg,#ff6b9a, #ff9bb8); display:flex; align-items:center; justify-content:center; color:white; font-weight:700}
+    h1{font-size:18px; margin:0; color:var(--text)}
+    p.lead{margin:0; color:var(--muted); font-size:13px}
+
+    .terminal{
+      background:transparent; min-height:360px; color:var(--text); font-size:15px; line-height:1.45; padding:18px; border-radius:8px; overflow:auto;
+      max-height:64vh;
+    }
+    .line{white-space:pre-wrap; word-break:break-word;}
+    .prompt{color:var(--muted)}
+    .cmd-input{
+      background:transparent; border:none; outline:none; color:var(--text); font-family:var(--mono); font-size:15px; flex:1;
+    }
+    .cursor{display:inline-block; width:10px; height:18px; background:var(--text); margin-left:6px; animation:blink 1s steps(2) infinite}
+    @keyframes blink{50%{opacity:0}}
+    .muted{color:var(--muted)}
+
+    .controls{display:flex; gap:8px; margin-top:12px}
+    .btn{background:transparent; border:1px solid rgba(124,252,0,0.08); padding:6px 10px; color:var(--muted); border-radius:8px; cursor:pointer}
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="viewport">
+      <header>
+        <div class="logo">R</div>
+        <div>
+          <h1>Love Terminal</h1>
+          <p class="lead">Type <span class="muted">help</span> to begin — crafted for <strong>Amrutha</strong>.</p>
+        </div>
+      </header>
+
+      <main id="terminal" class="terminal"></main>
+
+      <div style="display:flex; gap:8px; align-items:center; margin-top:10px">
+        <div style="color:var(--muted); font-size:13px">amrutha@love-terminal:~$</div>
+        <input id="cmd" class="cmd-input" autocomplete="off" />
+        <div class="cursor"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn" id="btnHelp">help</button>
+        <button class="btn" id="btnLove">show_love</button>
+        <button class="btn" id="btnSpecial">amrutha_special</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const terminal = document.getElementById('terminal');
+const input = document.getElementById('cmd');
+
+const appendLine = (txt, cls="") => {
+  const div = document.createElement("div");
+  div.className = "line " + cls;
+  div.textContent = txt;
+  terminal.appendChild(div);
+  terminal.scrollTop = terminal.scrollHeight;
+};
+
+function typeLine(text, speed = 20){
+  return new Promise(resolve=>{
+    let el = document.createElement("div");
+    el.className = "line";
+    terminal.appendChild(el);
+
+    let i = 0;
+    function step(){
+      if(i <= text.length){
+        el.textContent = text.slice(0, i);
+        terminal.scrollTop = terminal.scrollHeight;
+        i++;
+        setTimeout(step, speed);
+      } else resolve();
+    }
+    step();
+  });
+}
+
+async function slowPrint(arr){
+  for(const line of arr){
+    await typeLine(line, 20);
+  }
+}
+
+/* ----------------- FIXED MEMORIES ------------------ */
+const MEMORIES = [
+  "🌸 First date at Lal Bagh — where everything beautiful started.",
+  "🍽️ Lunch + sweet time at CAJC — peaceful, simple, perfect.",
+  "🎓 Graduation — celebrating dreams together.",
+  "🏫 Joining the same college — destiny proving its magic."
+];
+
+const FUTURE = [
+  "💍 A beautiful marriage together.",
+  "🏡 A warm peaceful home.",
+  "👶 Cute little children.",
+  "✈️ Romantic trips and adventures.",
+  "❤️ Growing old together."
+];
+
+const MESSAGES = [
+  "Hope your day was beautiful as you are ❤️",
+  "You deserve all the happiness in the world.",
+  "If no one told you today: You are loved."
+];
+
+/* ------------------- COMMANDS --------------------- */
+
+const COMMANDS = {
+  help: async () => {
+    await slowPrint([
+      "Available commands:",
+      "",
+      "help — show commands",
+      "show_love — express feelings",
+      "howwasyourday — ask her sweetly",
+      "poem — a romantic poem",
+      "surprise — a lovely moment",
+      "memories — show special memories",
+      "future — dreams together",
+      "clear — clear the terminal",
+      "amrutha_special — special surprise ❤️"
+    ]);
+  },
+
+  show_love: async () => {
+    await slowPrint([
+      "❤️ Love.exe running...",
+      "You are my favourite person, Amrutha.",
+      "You make everything feel magical."
+    ]);
+  },
+
+  memories: async () => {
+    for(const m of MEMORIES) await typeLine(m);
+  },
+
+  future: async () => {
+    for(const f of FUTURE) await typeLine(f);
+  },
+
+  howwasyourday: async () => {
+    await typeLine("How was your day, Amrutha? ❤️");
+  },
+
+  poem: async () => {
+    await slowPrint([
+      "You are my softest thought,",
+      "My calm in chaos,",
+      "My favourite forever."
+    ]);
+  },
+
+  surprise: async () => {
+    await slowPrint([
+      "💖 Surprise loading...",
+      "You matter more than you know.",
+      "Thank you for being in my life."
+    ]);
+  },
+
+  clear: async () => { terminal.innerHTML = ""; },
+
+  amrutha_special: async () => {
+    await slowPrint([
+      "Revealing something special...",
+      "💗 Amrutha, you are my forever.",
+      "Thank you for being you. — Ronnie ❤️"
+    ]);
+  }
+};
+
+/* ---------------- INPUT HANDLER ------------------ */
+async function runCommand(cmd){
+  appendLine("amrutha@love-terminal:~$ " + cmd, "prompt");
+
+  const fn = COMMANDS[cmd.trim()];
+  if(fn) await fn();
+  else appendLine("Unknown command. Type 'help'.");
+}
+
+input.addEventListener("keydown", e=>{
+  if(e.key === "Enter"){
+    runCommand(input.value.trim());
+    input.value = "";
+  }
+});
+
+/* ---------------- INTRO SEQUENCE ------------------ */
+(async function intro(){
+  await slowPrint([
+    "Booting Love OS 1.0...",
+    "Initializing feelings...",
+    "Loading memories...",
+    "Welcome, Amrutha ❤️"
+  ]);
+  appendLine("Type \"help\" to begin.");
+})();
+</script>
+
+</body>
+</html>
